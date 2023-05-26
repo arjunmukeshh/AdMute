@@ -9,7 +9,7 @@ Chrome extension to mute exactly when advertisements play and unmute when they d
 <br>  
 <strong> Execution details: </strong><br>
    <li> Open the JioCinema app.</li>
-   <li> Press the AdMute extension's activate button.</li>
+   <li> Press the AdMute extension and inspect element once the popup opens. Go full screen and press the activate button.</li>
    <li> Go on full screen for the extension to work.</li>
    <li> Enjoy.</li>
 
