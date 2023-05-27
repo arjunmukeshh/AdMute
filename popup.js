@@ -1,4 +1,4 @@
-/*pixel match*/
+//PixelMatch library code till line 234.
 const defaultOptions = {
   threshold: 0.1,         // matching threshold (0 to 1); smaller is more sensitive
   includeAA: false,       // whether to skip anti-aliasing detection
@@ -241,10 +241,9 @@ document.addEventListener("DOMContentLoaded", function() {
 var screenshotInterval;
 
 function startScreenshotInterval() {
-  // Capture initial screenshot immediately
   captureScreenshot();
   // Capture screenshots every 5 seconds
-  screenshotInterval = setInterval(captureScreenshot, 5000);
+  screenshotInterval = setInterval(captureScreenshot, 3000);
 }
 
 function captureScreenshot() {
@@ -252,29 +251,24 @@ function captureScreenshot() {
     var image = new Image();
 
     image.onload = function() {
-      // Define the coordinates and dimensions of the desired cropping area
+      // Define the coordinates and dimensions of the cropping area "I" in IPL logo.
       var cropX = 170;     // X-coordinate of the top-left corner of the cropping area
       var cropY = 110;     // Y-coordinate of the top-left corner of the cropping area
       var cropWidth = 6; // Width of the cropping area
       var cropHeight = 31; // Height of the cropping area
 
-      // Create a temporary canvas to draw the screenshot image
       var tempCanvas = document.createElement("canvas");
       var tempContext = tempCanvas.getContext("2d");
       tempCanvas.width = image.width;
       tempCanvas.height = image.height;
 
-      // Draw the screenshot image onto the temporary canvas
       tempContext.drawImage(image, 0, 0);
 
-      // Crop the screenshot
       var croppedDataUrl = cropScreenshot(tempCanvas, cropX, cropY, cropWidth, cropHeight);
-
-      // Compare pixels and mute audio if necessary
+      // Compare pixels and mute audio
       compareScreenshot(croppedDataUrl);
       
-      // Display the captured screenshot
-     // showScreenshot(croppedDataUrl);
+      
     };
 
     image.src = dataUrl;
@@ -297,7 +291,6 @@ function cropScreenshot(image, x, y, width, height) {
   var canvas = document.createElement("canvas");
   var context = canvas.getContext("2d");
 
-  // Set the dimensions of the canvas to match the cropped area
   canvas.width = width;
   canvas.height = height;
 
@@ -309,12 +302,12 @@ function cropScreenshot(image, x, y, width, height) {
 }
 
 function compareScreenshot(screenshotDataUrl) {
-  // Load the reference image
+  // Load the reference image(located in assets) which has a fullscreen screenshot that was taken earlier.
   var referenceImage = new Image();
   referenceImage.src = chrome.runtime.getURL("assets/demo1.png");
 
   referenceImage.onload = function () {
-    // Create a temporary canvas to draw the reference image
+    
     var canvas = document.createElement("canvas");
     var context = canvas.getContext("2d");
 
@@ -324,8 +317,8 @@ function compareScreenshot(screenshotDataUrl) {
 
     // Draw the reference image onto the canvas
     context.drawImage(referenceImage, 170, 110, 6, 31, 0, 0, 6, 31);
-    showScreenshot(canvas.toDataURL("image/png"));
-    // Get the pixel data for the reference image
+   // showScreenshot(canvas.toDataURL("image/png"));
+  
     var referenceImageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
     // Get the pixel data for the captured screenshot
@@ -337,11 +330,11 @@ function compareScreenshot(screenshotDataUrl) {
       var screenshotCanvas = document.createElement("canvas");
       var screenshotContext = screenshotCanvas.getContext("2d");
 
-      // Set canvas dimensions to match the screenshot
+      
       screenshotCanvas.width = screenshotImage.width;
       screenshotCanvas.height = screenshotImage.height;
 
-      // Draw the captured screenshot onto the canvas
+      
       screenshotContext.drawImage(screenshotImage, 0, 0);
 
       // Get the pixel data for the captured screenshot
@@ -350,32 +343,30 @@ function compareScreenshot(screenshotDataUrl) {
       // Compare pixels
       var pixelsMatch = comparePixels(referenceImageData, screenshotImageData);
       console.log(pixelsMatch)
-      // Mute tab audio if pixels match
-      if (pixelsMatch) {
+     
+      if (pixelsMatch) 
         // Pixels match, unmute tab audio
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
           chrome.tabs.update(tabs[0].id, { muted: false });
         });
-      } else {
+       else 
         // Pixels don't match, mute tab audio
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
           chrome.tabs.update(tabs[0].id, { muted: true });
         });
-      }
     };
   };
 }
 
 function comparePixels(referenceImageData, screenshotImageData) {
-  // Compare pixel data here and return true if they match, false otherwise
-  // Example comparison logic:
+  
   const img1 = referenceImageData
   const img2 = screenshotImageData
 
 
   const n = pixelmatch(img1.data, img2.data, 0, 6, 31, {threshold: 0.1});
 
- console.log(n)
+  console.log(n)
   if(n<=15)
     return true;
   return false;
